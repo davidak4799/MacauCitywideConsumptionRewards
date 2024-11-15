@@ -222,7 +222,7 @@ input[type="number"] {
     display: none;
 }
 
-/* 輸入頁面樣式��新 */
+/* 輸入頁面樣式新 */
 .input-group {
     margin-bottom: 20px;
     padding: 15px;
@@ -293,4 +293,148 @@ input[type="number"] {
     background: #0066cc;
     color: white;
     border-color: #0066cc;
-} 
+}
+
+/* 保存按鈕樣式 */
+#saveButton {
+    width: 100%;
+    padding: 15px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#saveButton:hover {
+    background: #0055b3;
+}
+
+#saveButton:active {
+    background: #004499;
+    transform: scale(0.98);
+}
+
+/* 金額項目樣式 */
+.amount-item {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 2px;
+    gap: 4px;
+}
+
+.delete-amount-btn {
+    border: none;
+    background: none;
+    color: #ff3b30;
+    font-size: 16px;
+    padding: 0 0 0 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-left: 4px;
+    transition: all 0.2s;
+}
+
+.delete-amount-btn:hover {
+    background: #ff3b30;
+    color: white;
+}
+
+/* 更新計算過程樣式 */
+.amounts-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.amounts-list::after {
+    content: "+";
+    margin: 0 4px;
+}
+
+.amounts-list:last-child::after {
+    display: none;
+}
+
+/* 添加無記錄樣式 */
+.no-records {
+    color: #999;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+
+/* 編輯金額按鈕樣式 */
+.edit-amount-btn {
+    border: none;
+    background: none;
+    color: #0066cc;
+    font-size: 14px;
+    padding: 0 0 0 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-left: 4px;
+    transition: all 0.2s;
+}
+
+.edit-amount-btn:hover {
+    background: #0066cc;
+    color: white;
+}
+
+/* 平台清除按鈕樣式 */
+.clear-platform-btn {
+    background: #ff3b30;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.clear-platform-btn:hover {
+    background: #ff453a;
+}
+
+/* 更新總金額顯示樣式 */
+.total-amount {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #1d1d1f;
+}
+
+.total-amount div {
+    margin: 5px 0;
+}
+
+/* 編輯模態框中的快速選擇按鈕樣式 */
+.modal .quick-amount-buttons {
+    margin: 10px 0;
+}
+
+.modal .amount-btn {
+    margin: 5px;
+}
+ 

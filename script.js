@@ -55,16 +55,20 @@ class RewardManager {
 
     // 添加新方法來獲取平台詳細統計
     getPlatformDetails() {
-        // 按平台分組並記錄每筆金額
         const details = {};
         this.records.forEach(record => {
             if (!details[record.platform]) {
                 details[record.platform] = {
                     amounts: [],
+                    amountDetails: [],
                     total: 0
                 };
             }
             details[record.platform].amounts.push(record.amount);
+            details[record.platform].amountDetails.push({
+                id: record.id,
+                amount: record.amount
+            });
             details[record.platform].total += record.amount;
         });
         return details;
@@ -73,9 +77,18 @@ class RewardManager {
 
 // 頁面管理
 class PageManager {
+    // 添加平台名稱映射
     constructor() {
         this.rewardManager = new RewardManager();
         this.currentPlatform = null;
+        this.platformNames = {
+            'BOC': '中國銀行',
+            'Mpay': 'Mpay',
+            'Alipay': '支付寶',
+            'ICBC': '工商銀行',
+            'Luso': '澳門國際銀行',
+            'FPay': '豐付寶'
+        };
         this.initializeEventListeners();
         this.showPage('platformPage');
     }
@@ -85,7 +98,8 @@ class PageManager {
         document.querySelectorAll('.platform-item').forEach(item => {
             item.addEventListener('click', () => {
                 this.currentPlatform = item.dataset.platform;
-                document.getElementById('selectedPlatform').textContent = this.currentPlatform;
+                document.getElementById('selectedPlatform').textContent = 
+                    this.platformNames[this.currentPlatform];
                 this.showPage('inputPage');
             });
         });
@@ -187,20 +201,46 @@ class PageManager {
     }
 
     updateRecordPage() {
-        const platformDetails = this.rewardManager.getPlatformDetails();
+        const records = this.rewardManager.getRecords();
         
-        // 生成包含計算過程的HTML
-        const summaryHtml = Object.entries(platformDetails)
+        // 按平台分組記錄
+        const platformStats = {};
+        records.forEach(record => {
+            if (!platformStats[record.platform]) {
+                platformStats[record.platform] = {
+                    records: [],
+                    total: 0
+                };
+            }
+            platformStats[record.platform].records.push({
+                id: record.id,
+                amount: record.amount
+            });
+            platformStats[record.platform].total += record.amount;
+        });
+
+        // 更新平台總計顯示
+        const summaryHtml = Object.entries(platformStats)
             .map(([platform, data]) => {
-                const amountsList = data.amounts
-                    .map(amount => `$${amount.toFixed(2)}`)
+                const amountsList = data.records
+                    .map(record => `
+                        <div class="amount-item" data-record-id="${record.id}">
+                            <span>$${record.amount.toFixed(2)}</span>
+                        </div>
+                    `)
                     .join(' + ');
                 return `
-                    <div class="summary-item">
-                        <div class="platform-name">${platform}</div>
+                    <div class="summary-item" data-platform="${platform}">
+                        <div class="platform-name">${this.platformNames[platform]}</div>
                         <div class="calculation-process">
-                            <div class="amounts-list">${amountsList}</div>
-                            <div class="total-amount">= $${data.total.toFixed(2)}</div>
+                            <div class="amounts-list">${amountsList || '無記錄'}</div>
+                            <div class="total-amount">
+                                <div>獎勵總額 = $${data.total.toFixed(2)}</div>
+                                <div>需消費金額 = $${(data.total * 3).toFixed(2)}</div>
+                            </div>
+                            <button class="clear-platform-btn" onclick="pageManager.clearPlatformRecords('${platform}')">
+                                清除${this.platformNames[platform]}記錄
+                            </button>
                         </div>
                     </div>
                 `;
@@ -209,39 +249,74 @@ class PageManager {
         document.getElementById('platformSummary').innerHTML = summaryHtml;
         
         // 更新總金額
-        const totalAmount = this.rewardManager.getTotalAmount();
+        const totalAmount = Object.values(platformStats)
+            .reduce((sum, data) => sum + data.total, 0);
         document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
 
-        const records = this.rewardManager.getRecords();
+        // 更新詳細記錄列表
         const recordsHtml = records.map(record => `
-            <div class="record-item" data-id="${record.id}">
-                <div class="record-platform">${record.platform}</div>
+            <div class="record-item" data-id="${record.id}" data-platform="${record.platform}">
+                <div class="record-platform">${this.platformNames[record.platform]}</div>
                 <div class="record-amount">$${record.amount.toFixed(2)}</div>
                 <div class="record-date">${new Date(record.date).toLocaleDateString()}</div>
                 <div class="record-actions">
                     <button class="edit-btn" onclick="pageManager.editRecord('${record.id}')">編輯</button>
-                    <button class="delete-btn" onclick="pageManager.deleteRecord('${record.id}')">刪除</button>
                 </div>
             </div>
         `).join('');
         document.getElementById('recordsList').innerHTML = recordsHtml;
     }
 
+    // 添加清除指定平台記錄的方法
+    clearPlatformRecords(platform) {
+        if (confirm(`確定要清除 ${this.platformNames[platform]} 的所有記錄嗎？`)) {
+            this.rewardManager.records = this.rewardManager.records.filter(
+                record => record.platform !== platform
+            );
+            this.rewardManager.saveRecords();
+            this.updateRecordPage();
+        }
+    }
+
+    // 修改編輯記錄的方法，添加快速選擇按鈕
     editRecord(id) {
         const record = this.rewardManager.records.find(r => r.id === parseInt(id));
         if (!record) return;
 
+        // 更新編輯模態框的HTML
         const modal = document.getElementById('editModal');
-        const amountInput = document.getElementById('editAmount');
-        
-        amountInput.value = record.amount;
+        modal.querySelector('.modal-content').innerHTML = `
+            <h3>編輯記錄</h3>
+            <input type="number" id="editAmount" placeholder="輸入新金額" value="${record.amount}">
+            <div class="quick-amount-buttons">
+                <button class="amount-btn" data-amount="100">100</button>
+                <button class="amount-btn" data-amount="50">50</button>
+                <button class="amount-btn" data-amount="20">20</button>
+                <button class="amount-btn" data-amount="10">10</button>
+                <button class="amount-btn" data-amount="0">0</button>
+            </div>
+            <div class="modal-buttons">
+                <button id="cancelEdit">取消</button>
+                <button id="confirmEdit">確認</button>
+            </div>
+        `;
+
         modal.classList.remove('hidden');
+
+        // 添加快速選擇按鈕的事件監聽
+        modal.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('editAmount').value = btn.dataset.amount;
+                modal.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+        });
 
         const confirmBtn = document.getElementById('confirmEdit');
         const cancelBtn = document.getElementById('cancelEdit');
 
         const handleConfirm = () => {
-            const newAmount = amountInput.value;
+            const newAmount = document.getElementById('editAmount').value;
             if (newAmount) {
                 this.rewardManager.updateRecord(parseInt(id), newAmount);
                 this.updateRecordPage();
@@ -262,13 +337,6 @@ class PageManager {
 
         confirmBtn.addEventListener('click', handleConfirm);
         cancelBtn.addEventListener('click', handleCancel);
-    }
-
-    deleteRecord(id) {
-        if (confirm('確定要刪除這條記錄嗎？')) {
-            this.rewardManager.deleteRecord(parseInt(id));
-            this.updateRecordPage();
-        }
     }
 }
 
