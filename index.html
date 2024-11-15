@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>獎勵金記帳</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 第一個頁面：平台選擇 -->
+    <div class="page" id="platformPage">
+        <h1>選擇支付平台</h1>
+        <div class="platform-grid">
+            <div class="platform-item" data-platform="BOC">
+                <svg class="platform-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="#1a4f9c"/>
+                    <text x="12" y="16" text-anchor="middle" fill="white" font-size="8">BOC</text>
+                </svg>
+                <span>中國銀行</span>
+            </div>
+            <div class="platform-item" data-platform="Mpay">
+                <svg class="platform-icon" viewBox="0 0 24 24">
+                    <rect x="2" y="2" width="20" height="20" rx="4" fill="#2196f3"/>
+                    <text x="12" y="16" text-anchor="middle" fill="white" font-size="8">MPay</text>
+                </svg>
+                <span>Mpay</span>
+            </div>
+            <div class="platform-item" data-platform="Alipay">
+                <svg class="platform-icon" viewBox="0 0 24 24">
+                    <rect x="2" y="2" width="20" height="20" rx="4" fill="#00a0e9"/>
+                    <text x="12" y="16" text-anchor="middle" fill="white" font-size="6">支付寶</text>
+                </svg>
+                <span>支付寶</span>
+            </div>
+            <div class="platform-item" data-platform="ICBC">
+                <svg class="platform-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="#c50f1c"/>
+                    <text x="12" y="16" text-anchor="middle" fill="white" font-size="8">ICBC</text>
+                </svg>
+                <span>工商銀行</span>
+            </div>
+            <div class="platform-item" data-platform="Luso">
+                <svg class="platform-icon" viewBox="0 0 24 24">
+                    <rect x="2" y="2" width="20" height="20" rx="4" fill="#4caf50"/>
+                    <text x="12" y="16" text-anchor="middle" fill="white" font-size="8">Luso</text>
+                </svg>
+                <span>Luso</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第二個頁面：輸入金額 -->
+    <div class="page hidden" id="inputPage">
+        <button class="back-btn">返回</button>
+        <h2>輸入獎勵金額</h2>
+        <div class="input-container">
+            <span id="selectedPlatform" class="platform-label"></span>
+            
+            <div class="input-group">
+                <label for="amount1">第1次中獎電子優惠金額 (MOP)</label>
+                <input type="number" id="amount1" placeholder="請輸入金額">
+                <div class="quick-amount-buttons">
+                    <button class="amount-btn" data-target="amount1" data-amount="100">100</button>
+                    <button class="amount-btn" data-target="amount1" data-amount="50">50</button>
+                    <button class="amount-btn" data-target="amount1" data-amount="20">20</button>
+                    <button class="amount-btn" data-target="amount1" data-amount="10">10</button>
+                    <button class="amount-btn" data-target="amount1" data-amount="0">0</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="amount2">第2次中獎電子優惠金額 (MOP)</label>
+                <input type="number" id="amount2" placeholder="請輸入金額">
+                <div class="quick-amount-buttons">
+                    <button class="amount-btn" data-target="amount2" data-amount="100">100</button>
+                    <button class="amount-btn" data-target="amount2" data-amount="50">50</button>
+                    <button class="amount-btn" data-target="amount2" data-amount="20">20</button>
+                    <button class="amount-btn" data-target="amount2" data-amount="10">10</button>
+                    <button class="amount-btn" data-target="amount2" data-amount="0">0</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="amount3">第3次中獎電子優惠金額 (MOP)</label>
+                <input type="number" id="amount3" placeholder="請輸入金額">
+                <div class="quick-amount-buttons">
+                    <button class="amount-btn" data-target="amount3" data-amount="100">100</button>
+                    <button class="amount-btn" data-target="amount3" data-amount="50">50</button>
+                    <button class="amount-btn" data-target="amount3" data-amount="20">20</button>
+                    <button class="amount-btn" data-target="amount3" data-amount="10">10</button>
+                    <button class="amount-btn" data-target="amount3" data-amount="0">0</button>
+                </div>
+            </div>
+
+            <button id="saveButton">保存</button>
+        </div>
+    </div>
+
+    <!-- 第三個頁面：記錄查看 -->
+    <div class="page hidden" id="recordPage">
+        <button class="back-btn">返回</button>
+        <h2>獎勵金記錄</h2>
+        <div class="summary-container">
+            <div class="summary-header">
+                <h3>平台總計</h3>
+                <button id="clearAllBtn" class="clear-all-btn">清理所有記錄</button>
+            </div>
+            <div id="platformSummary" class="platform-summary"></div>
+            <div class="total-summary">
+                <strong>總計金額：</strong>
+                <span id="totalAmount">$0.00</span>
+            </div>
+        </div>
+        <div class="records-container">
+            <h3>詳細記錄</h3>
+            <div class="records-header">
+                <span>平台</span>
+                <span>金額</span>
+                <span>日期</span>
+                <span>操作</span>
+            </div>
+            <div id="recordsList"></div>
+        </div>
+    </div>
+
+    <!-- 添加編輯記錄的彈窗 -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>編輯記錄</h3>
+            <input type="number" id="editAmount" placeholder="輸入新金額">
+            <div class="modal-buttons">
+                <button id="cancelEdit">取消</button>
+                <button id="confirmEdit">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button id="homeBtn" class="active">首頁</button>
+        <button id="recordBtn">記錄</button>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html> 

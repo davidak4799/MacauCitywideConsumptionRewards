@@ -1,0 +1,296 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+}
+
+.page {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: calc(100vh - 60px);
+}
+
+.hidden {
+    display: none;
+}
+
+/* 平台選擇網格 */
+.platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.platform-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.platform-item:hover {
+    transform: scale(1.05);
+}
+
+.platform-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+}
+
+/* 輸入頁面樣式 */
+.input-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* 底部導航 */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #d2d2d7;
+}
+
+.bottom-nav button {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    background: none;
+    color: #1d1d1f;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.bottom-nav button.active {
+    color: #0066cc;
+}
+
+/* 記錄頁面樣式 */
+.summary-container,
+.records-container {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.back-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: #0066cc;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* 平台總計樣式 */
+.platform-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.summary-item {
+    background: #f5f5f7;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.platform-name {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #1d1d1f;
+}
+
+.calculation-process {
+    font-size: 14px;
+    color: #666;
+}
+
+.amounts-list {
+    margin-bottom: 4px;
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.total-amount {
+    font-weight: bold;
+    color: #1d1d1f;
+}
+
+/* 記錄列表樣式 */
+.records-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 80px;
+    padding: 10px;
+    background: #f5f5f7;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.record-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 80px;
+    padding: 10px;
+    border-bottom: 1px solid #e5e5e7;
+    align-items: center;
+}
+
+.record-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.record-actions button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: #0066cc;
+    color: white;
+}
+
+.delete-btn {
+    background: #ff3b30;
+    color: white;
+}
+
+/* 編輯彈窗樣式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+/* 輸入頁面樣式��新 */
+.input-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f5f5f7;
+    border-radius: 8px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #1d1d1f;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input-group input[type="number"] {
+    margin: 0;
+}
+
+.platform-label {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #1d1d1f;
+}
+
+/* 清理按鈕樣式 */
+.clear-all-btn {
+    background: #ff3b30;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.clear-all-btn:hover {
+    background: #ff453a;
+}
+
+/* 快速金額按鈕樣式 */
+.quick-amount-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.amount-btn {
+    padding: 8px 12px;
+    border: 1px solid #d2d2d7;
+    border-radius: 6px;
+    background: white;
+    color: #1d1d1f;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.amount-btn:hover {
+    background: #f5f5f7;
+}
+
+.amount-btn.selected {
+    background: #0066cc;
+    color: white;
+    border-color: #0066cc;
+} 
