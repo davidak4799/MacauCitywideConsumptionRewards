@@ -91,6 +91,32 @@ class PageManager {
         };
         this.initializeEventListeners();
         this.showPage('platformPage');
+        this.messageTimeout = null; // 添加消息超时计时器属性
+    }
+
+    // 添加显示消息的方法
+    showMessage(message, duration = 2000) {
+        const messageEl = document.getElementById('saveMessage');
+        messageEl.textContent = message;
+        messageEl.classList.remove('hidden');
+        
+        // 使用 requestAnimationFrame 确保过渡效果正常工作
+        requestAnimationFrame(() => {
+            messageEl.classList.add('show');
+        });
+
+        // 清除之前的定时器
+        if (this.messageTimeout) {
+            clearTimeout(this.messageTimeout);
+        }
+
+        // 设置新的定时器
+        this.messageTimeout = setTimeout(() => {
+            messageEl.classList.remove('show');
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 300); // 等待淡出动画完成
+        }, duration);
     }
 
     initializeEventListeners() {
@@ -106,28 +132,35 @@ class PageManager {
 
         // 保存按鈕
         document.getElementById('saveButton').addEventListener('click', () => {
-            const amount1 = document.getElementById('amount1').value;
-            const amount2 = document.getElementById('amount2').value;
-            const amount3 = document.getElementById('amount3').value;
+            const amount = document.getElementById('amount').value;
             
-            if (this.currentPlatform) {
-                // 添加非空的金額記錄
-                if (amount1) {
-                    this.rewardManager.addRecord(this.currentPlatform, amount1);
-                }
-                if (amount2) {
-                    this.rewardManager.addRecord(this.currentPlatform, amount2);
-                }
-                if (amount3) {
-                    this.rewardManager.addRecord(this.currentPlatform, amount3);
-                }
+            if (this.currentPlatform && amount) {
+                // 添加記錄
+                this.rewardManager.addRecord(this.currentPlatform, amount);
 
                 // 清空輸入框
-                document.getElementById('amount1').value = '';
-                document.getElementById('amount2').value = '';
-                document.getElementById('amount3').value = '';
+                document.getElementById('amount').value = '';
                 
-                this.showPage('platformPage');
+                // 清除按鈕選中狀態
+                document.querySelectorAll('.amount-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+
+                // 獲取該平台的記錄數
+                const platformRecords = this.rewardManager.records.filter(
+                    r => r.platform === this.currentPlatform
+                );
+                
+                if (platformRecords.length < 3) {
+                    // 显示保存成功消息，包含金额信息
+                    this.showMessage(`已保存 $${amount} - 第${platformRecords.length}次記錄，可繼續輸入下一次金額`);
+                } else {
+                    // 显示保存成功消息，包含金额信息
+                    this.showMessage(`已保存 $${amount} - 返回首頁`);
+                    setTimeout(() => {
+                        this.showPage('platformPage');
+                    }, 1500);
+                }
             }
         });
 
@@ -140,41 +173,63 @@ class PageManager {
             btn.addEventListener('click', () => this.showPage('platformPage'));
         });
 
-        // 添加清理所有記錄的事件監聽器
+        // 修改清理所有記錄的事件監聽器
         document.getElementById('clearAllBtn').addEventListener('click', () => {
-            if (confirm('確定要清理所有記錄嗎？此操作不可恢復！')) {
-                this.rewardManager.clearAllRecords();
-                this.updateRecordPage();
-            }
+            const totalRecords = this.rewardManager.records.length;
+            const totalAmount = this.rewardManager.getTotalAmount();
+            
+            this.rewardManager.clearAllRecords();
+            this.showMessage(`已清除所有記錄 (共${totalRecords}筆，$${totalAmount})`);
+            this.updateRecordPage();
         });
 
-        // 添加快速金額按鈕事件監聽器
+        // 修改快速金額按鈕的事件監聽
         document.querySelectorAll('.amount-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const targetId = e.target.dataset.target;
                 const amount = e.target.dataset.amount;
-                const input = document.getElementById(targetId);
-                
-                // 更新輸入框的值
-                input.value = amount;
+                document.getElementById('amount').value = amount;
                 
                 // 更新按鈕選中狀態
-                const buttonGroup = e.target.parentElement;
-                buttonGroup.querySelectorAll('.amount-btn').forEach(button => {
+                document.querySelectorAll('.amount-btn').forEach(button => {
                     button.classList.remove('selected');
                 });
                 e.target.classList.add('selected');
+                
+                // 自動保存邏輯
+                if (this.currentPlatform && amount) {
+                    // 添加記錄
+                    this.rewardManager.addRecord(this.currentPlatform, amount);
+                    
+                    // 清空輸入框
+                    document.getElementById('amount').value = '';
+                    
+                    // 清除按鈕選中狀態
+                    e.target.classList.remove('selected');
+                    
+                    // 獲取該平台的記錄數
+                    const platformRecords = this.rewardManager.records.filter(
+                        r => r.platform === this.currentPlatform
+                    );
+                    
+                    if (platformRecords.length < 3) {
+                        // 显示保存成功消息，包含金额信息
+                        this.showMessage(`已保存 $${amount} - 第${platformRecords.length}次記錄，可繼續輸入下一次金額`);
+                    } else {
+                        // 显示保存成功消息，包含金额信息
+                        this.showMessage(`已保存 $${amount} - 返回首頁`);
+                        setTimeout(() => {
+                            this.showPage('platformPage');
+                        }, 1500);
+                    }
+                }
             });
         });
 
-        // 監聽輸入框變化，更新按鈕選中狀態
-        ['amount1', 'amount2', 'amount3'].forEach(inputId => {
-            document.getElementById(inputId).addEventListener('input', (e) => {
-                const value = e.target.value;
-                const buttonGroup = e.target.nextElementSibling;
-                buttonGroup.querySelectorAll('.amount-btn').forEach(btn => {
-                    btn.classList.toggle('selected', btn.dataset.amount === value);
-                });
+        // 監聽輸入框變化
+        document.getElementById('amount').addEventListener('input', (e) => {
+            const value = e.target.value;
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.amount === value);
             });
         });
     }
@@ -203,7 +258,7 @@ class PageManager {
     updateRecordPage() {
         const records = this.rewardManager.getRecords();
         
-        // 按平台分組記錄
+        // 按平台分組記錄，並按時間排序以確定順序
         const platformStats = {};
         records.forEach(record => {
             if (!platformStats[record.platform]) {
@@ -214,18 +269,27 @@ class PageManager {
             }
             platformStats[record.platform].records.push({
                 id: record.id,
-                amount: record.amount
+                amount: record.amount,
+                date: record.date
             });
             platformStats[record.platform].total += record.amount;
         });
 
-        // 更新平台總計顯示
+        // 更新平台總計顯示，添加序號
         const summaryHtml = Object.entries(platformStats)
             .map(([platform, data]) => {
+                // 對記錄按時間排序
+                data.records.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
                 const amountsList = data.records
-                    .map(record => `
+                    .map((record, index) => `
                         <div class="amount-item" data-record-id="${record.id}">
-                            <span>$${record.amount.toFixed(2)}</span>
+                            <span class="amount-order">第${index + 1}次：</span>
+                            <span class="amount-value">$${record.amount.toFixed(2)}</span>
+                            <div class="amount-actions">
+                                <button class="edit-amount-btn" onclick="pageManager.editRecord('${record.id}')">✎</button>
+                                <button class="delete-amount-btn" onclick="pageManager.deleteAmount('${record.id}', '${platform}')">×</button>
+                            </div>
                         </div>
                     `)
                     .join(' + ');
@@ -253,7 +317,7 @@ class PageManager {
             .reduce((sum, data) => sum + data.total, 0);
         document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
 
-        // 更新詳細記錄列表
+        // 更新詳細記錄列表，顯示完整信息
         const recordsHtml = records.map(record => `
             <div class="record-item" data-id="${record.id}" data-platform="${record.platform}">
                 <div class="record-platform">${this.platformNames[record.platform]}</div>
@@ -267,26 +331,63 @@ class PageManager {
         document.getElementById('recordsList').innerHTML = recordsHtml;
     }
 
-    // 添加清除指定平台記錄的方法
-    clearPlatformRecords(platform) {
-        if (confirm(`確定要清除 ${this.platformNames[platform]} 的所有記錄嗎？`)) {
-            this.rewardManager.records = this.rewardManager.records.filter(
-                record => record.platform !== platform
-            );
-            this.rewardManager.saveRecords();
-            this.updateRecordPage();
-        }
+    // 修改删除金额的方法
+    deleteAmount(id, platform) {
+        const recordToDelete = this.rewardManager.records.find(r => r.id === parseInt(id));
+        if (!recordToDelete) return;
+
+        // 删除记录
+        this.rewardManager.deleteRecord(parseInt(id));
+        
+        // 显示删除成功的提示
+        this.showMessage(`已刪除 ${this.platformNames[platform]} 的記錄 ($${recordToDelete.amount})`);
+        
+        // 更新页面
+        this.updateRecordPage();
     }
 
-    // 修改編輯記錄的方法，添加快速選擇按鈕
+    // 修改清除平台记录的方法
+    clearPlatformRecords(platform) {
+        // 获取该平台的记录总数和总金额
+        const platformRecords = this.rewardManager.records.filter(r => r.platform === platform);
+        const totalAmount = platformRecords.reduce((sum, record) => sum + record.amount, 0);
+        
+        // 删除该平台的所有记录
+        this.rewardManager.records = this.rewardManager.records.filter(
+            record => record.platform !== platform
+        );
+        this.rewardManager.saveRecords();
+        
+        // 显示删除成功的提示
+        this.showMessage(`已清除 ${this.platformNames[platform]} 的所有記錄 (共${platformRecords.length}筆，$${totalAmount})`);
+        
+        // 更新页面
+        this.updateRecordPage();
+    }
+
+    // 修改編輯記錄的方法
     editRecord(id) {
         const record = this.rewardManager.records.find(r => r.id === parseInt(id));
         if (!record) return;
+
+        // 獲取該平台的所有記錄並按時間倒序排序
+        const platformRecords = this.rewardManager.records
+            .filter(r => r.platform === record.platform)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));  // 按時間正序排序
+
+        // 計算這是該平台的第幾次記錄
+        const recordIndex = platformRecords.findIndex(r => r.id === parseInt(id)) + 1;
 
         // 更新編輯模態框的HTML
         const modal = document.getElementById('editModal');
         modal.querySelector('.modal-content').innerHTML = `
             <h3>編輯記錄</h3>
+            <div class="edit-platform-info">
+                <span>平台：${this.platformNames[record.platform]}</span>
+                <span>第${recordIndex}次記錄</span>
+                <span>原金額：$${record.amount.toFixed(2)}</span>
+                <span>記錄時間：${new Date(record.date).toLocaleString()}</span>
+            </div>
             <input type="number" id="editAmount" placeholder="輸入新金額" value="${record.amount}">
             <div class="quick-amount-buttons">
                 <button class="amount-btn" data-amount="100">100</button>
@@ -301,12 +402,22 @@ class PageManager {
             </div>
         `;
 
+        // 顯示模態框
         modal.classList.remove('hidden');
+
+        // 設置當前金額按鈕的選中狀態
+        const currentAmount = record.amount.toString();
+        modal.querySelectorAll('.amount-btn').forEach(btn => {
+            if (btn.dataset.amount === currentAmount) {
+                btn.classList.add('selected');
+            }
+        });
 
         // 添加快速選擇按鈕的事件監聽
         modal.querySelectorAll('.amount-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.getElementById('editAmount').value = btn.dataset.amount;
+                const amountInput = document.getElementById('editAmount');
+                amountInput.value = btn.dataset.amount;
                 modal.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
             });
@@ -317,10 +428,12 @@ class PageManager {
 
         const handleConfirm = () => {
             const newAmount = document.getElementById('editAmount').value;
-            if (newAmount) {
+            if (newAmount && !isNaN(newAmount) && parseFloat(newAmount) >= 0) {
                 this.rewardManager.updateRecord(parseInt(id), newAmount);
                 this.updateRecordPage();
                 modal.classList.add('hidden');
+            } else {
+                alert('請輸入有效的金額');
             }
             cleanup();
         };

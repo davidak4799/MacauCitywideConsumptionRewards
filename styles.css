@@ -286,13 +286,30 @@ input[type="number"] {
 }
 
 .amount-btn:hover {
-    background: #f5f5f7;
+    background: #ffd60a;
+    border-color: #ffd60a;
+    transform: scale(1.05);
 }
 
 .amount-btn.selected {
-    background: #0066cc;
-    color: white;
-    border-color: #0066cc;
+    background: #ffd60a;
+    border-color: #ffd60a;
+    color: #000000;
+}
+
+.amount-btn:active {
+    transform: scale(0.95);
+}
+
+.amount-btn[data-amount="0"] {
+    background: #f5f5f7;
+    border-color: #e5e5e7;
+}
+
+.amount-btn[data-amount="0"]:hover,
+.amount-btn[data-amount="0"].selected {
+    background: #ffd60a;
+    border-color: #ffd60a;
 }
 
 /* 保存按鈕樣式 */
@@ -324,10 +341,27 @@ input[type="number"] {
     display: inline-flex;
     align-items: center;
     background: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin: 2px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.amount-order {
+    color: #666;
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.amount-value {
+    font-weight: 500;
+    color: #1d1d1f;
+}
+
+.amount-actions {
+    display: inline-flex;
     gap: 4px;
+    margin-left: 8px;
 }
 
 .delete-amount-btn {
@@ -355,19 +389,14 @@ input[type="number"] {
 /* 更新計算過程樣式 */
 .amounts-list {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 8px;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
+/* 移除加號 */
 .amounts-list::after {
-    content: "+";
-    margin: 0 4px;
-}
-
-.amounts-list:last-child::after {
-    display: none;
+    content: none;
 }
 
 /* 添加無記錄樣式 */
@@ -436,5 +465,98 @@ input[type="number"] {
 
 .modal .amount-btn {
     margin: 5px;
+}
+
+/* 編輯模態框中的平台信息樣式 */
+.edit-platform-info {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f5f5f7;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.edit-platform-info span {
+    color: #1d1d1f;
+    font-size: 14px;
+}
+
+/* 金額項目的操作按鈕樣式 */
+.amount-actions {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.amount-item {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 2px;
+}
+
+.edit-amount-btn,
+.delete-amount-btn {
+    border: none;
+    background: none;
+    font-size: 14px;
+    padding: 2px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.edit-amount-btn {
+    color: #0066cc;
+}
+
+.delete-amount-btn {
+    color: #ff3b30;
+}
+
+.edit-amount-btn:hover {
+    background: #0066cc;
+    color: white;
+}
+
+.delete-amount-btn:hover {
+    background: #ff3b30;
+    color: white;
+}
+
+/* 添加提示消息样式 */
+.save-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.save-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(10px);
+}
+
+.save-message.hidden {
+    display: none;
 }
  

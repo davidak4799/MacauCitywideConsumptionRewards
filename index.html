@@ -60,42 +60,19 @@
     <div class="page hidden" id="inputPage">
         <button class="back-btn">返回</button>
         <h2>輸入獎勵金額</h2>
+        <div id="saveMessage" class="save-message hidden"></div>
         <div class="input-container">
             <span id="selectedPlatform" class="platform-label"></span>
             
             <div class="input-group">
-                <label for="amount1">第1次中獎電子優惠金額 (MOP)</label>
-                <input type="number" id="amount1" placeholder="請輸入金額">
+                <label for="amount">獎勵金額 (MOP)</label>
+                <input type="number" id="amount" placeholder="請輸入金額">
                 <div class="quick-amount-buttons">
-                    <button class="amount-btn" data-target="amount1" data-amount="100">100</button>
-                    <button class="amount-btn" data-target="amount1" data-amount="50">50</button>
-                    <button class="amount-btn" data-target="amount1" data-amount="20">20</button>
-                    <button class="amount-btn" data-target="amount1" data-amount="10">10</button>
-                    <button class="amount-btn" data-target="amount1" data-amount="0">0</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="amount2">第2次中獎電子優惠金額 (MOP)</label>
-                <input type="number" id="amount2" placeholder="請輸入金額">
-                <div class="quick-amount-buttons">
-                    <button class="amount-btn" data-target="amount2" data-amount="100">100</button>
-                    <button class="amount-btn" data-target="amount2" data-amount="50">50</button>
-                    <button class="amount-btn" data-target="amount2" data-amount="20">20</button>
-                    <button class="amount-btn" data-target="amount2" data-amount="10">10</button>
-                    <button class="amount-btn" data-target="amount2" data-amount="0">0</button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="amount3">第3次中獎電子優惠金額 (MOP)</label>
-                <input type="number" id="amount3" placeholder="請輸入金額">
-                <div class="quick-amount-buttons">
-                    <button class="amount-btn" data-target="amount3" data-amount="100">100</button>
-                    <button class="amount-btn" data-target="amount3" data-amount="50">50</button>
-                    <button class="amount-btn" data-target="amount3" data-amount="20">20</button>
-                    <button class="amount-btn" data-target="amount3" data-amount="10">10</button>
-                    <button class="amount-btn" data-target="amount3" data-amount="0">0</button>
+                    <button class="amount-btn" data-amount="100">100</button>
+                    <button class="amount-btn" data-amount="50">50</button>
+                    <button class="amount-btn" data-amount="20">20</button>
+                    <button class="amount-btn" data-amount="10">10</button>
+                    <button class="amount-btn" data-amount="0">0</button>
                 </div>
             </div>
 
