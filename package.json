@@ -1,0 +1,20 @@
+{
+  "name": "macau-citywide-consumption-rewards",
+  "version": "1.0.0",
+  "description": "Macau Citywide Consumption Rewards Website",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve",
+    "build": "mkdir -p dist && cp -r index.html styles.css script.js dist/"
+  },
+  "keywords": [
+    "macau",
+    "rewards",
+    "consumption"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+} 
